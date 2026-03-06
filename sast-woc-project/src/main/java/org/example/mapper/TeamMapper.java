@@ -8,7 +8,7 @@ import org.example.provider.TeamSqlProvider;
 import java.util.List;
 
 @Mapper
-公共 interface TeamMapper {
+public interface TeamMapper {
     @Select("select team.id, team.com_id, team.name, captain_id, captain_name, status from team,`sast_woc`.user where captain_id=user.id and user.id=(select id from user where user.user_code=#{UserCode})")
     TeamVO getByCaptain(String UserCode);
 
@@ -21,9 +21,4 @@ import java.util.List;
     @SelectProvider(type = TeamSqlProvider.class, method = "selectByComIdAndAcademy")
     List<Team> selectByComIdAndAcademy(@Param("academyId") Long academyId,
                                        @Param("comId") Integer comId);
-
-
-
-
-
 }
