@@ -1,0 +1,53 @@
+-- 一些初始数据
+insert into academy (name) values
+                               ('通信与信息工程学院'),
+                               ('电子与光学工程学院'),
+                               ('集成电路科学与工程学院'),
+                               ('计算机学院'),
+                               ('自动化学院'),
+                               ('贝尔英才学院'),
+                               ('波特兰学院');
+
+
+insert into user (user_code, password, name, role) values
+                                                       ('admin', '$2a$10$pmGLn8lrEpyXvhPpWxwz7e8elO1.LZsFWnwIV19ETeHSuf9FRO3vK', '系统管理员', 3),
+                                                       ('academy4', '$2a$10$pmGLn8lrEpyXvhPpWxwz7e8elO1.LZsFWnwIV19ETeHSuf9FRO3vK', '计软院管理员', 2);
+-- 初始密码统一设置为123456 采用BCrypt加密
+
+set foreign_key_checks = 1;
+
+insert into competition (id,name, description, max_team_members, min_team_members, work_code, start_time, end_time, review_begin_time, review_end_time)
+values (1,
+        '钟表匠遗产争夺',
+        '一场围绕匹诺康尼钟表匠遗产的团队竞技比赛',
+        5,
+        3,
+        'C25000000',
+        '2026-01-01',
+        '2026-06-30',
+        '2026-07-01',
+        '2026-07-15'
+       );
+insert into user (user_code, password, name, academy_id, role) values
+                                                                   ('kaituozhe', '$2a$10$pmGLn8lrEpyXvhPpWxwz7e8elO1.LZsFWnwIV19ETeHSuf9FRO3vK', '开拓者', 4, 0),
+                                                                   ('zandaer',   '$2a$10$pmGLn8lrEpyXvhPpWxwz7e8elO1.LZsFWnwIV19ETeHSuf9FRO3vK', '赞达尔', 6, 0);
+
+insert into team (com_id, name, captain_id, captain_name, status) values
+                                                                      (1, '开拓者小队', '2', '开拓者', 0),
+                                                                      (1, '天才俱乐部', '3', '赞达尔', 0);
+
+insert into member (id,team_id, student_id, name, academy_id, phone, is_captain) values
+                                                                                     (1,1, 'C25000001', '流萤', 4, null, 0),
+                                                                                     (2,1, 'C25000002', '三月七', 4, null, 0),
+                                                                                     (3,1, 'C25000003', '丹恒', 4, null, 0),
+                                                                                     (4,1, 'C25000000', '开拓者', 4, null, 1);
+
+insert into member (id,team_id, student_id, name, academy_id, phone, is_captain) values
+                                                                                     (5,2, '2024001', '黑塔', 6, null, 0),
+                                                                                     (6,2, '2024002', '寂静领主', 6, null, 0),
+                                                                                     (7,2, '2024003', '阮梅', 6, null, 0),
+                                                                                     (8,2, '2024004', '赞达尔', 6, null, 1);
+
+insert into instructor (name, work_code, academy_id, phone,team_id) values
+                                                                        ('开拓星神', 'guide001', 4, null, 1),
+                                                                        ('智识星神', 'guide002', 6, null,2);
