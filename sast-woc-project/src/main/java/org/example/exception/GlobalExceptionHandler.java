@@ -23,10 +23,16 @@ public class GlobalExceptionHandler {
     public Result handleDuplicateKeyException(DuplicateKeyException e) {
         log.error("(全局异常处理器)运行时异常: {}", e.getMessage());
         String message = e.getMessage();
-        int i=message.indexOf("Duplicate entry");
-        String errMsg=message.substring(i);
-        String[] arr=errMsg.split(" ");
-        return Result.error(3001, arr[2]+"已存在");
+        int i = message == null ? -1 : message.indexOf("Duplicate entry");
+        if (i < 0) {
+            return Result.error(3001, "数据已存在");
+        }
+        String errMsg = message.substring(i);
+        String[] arr = errMsg.split(" ");
+        if (arr.length < 3) {
+            return Result.error(3001, "数据已存在");
+        }
+        return Result.error(3001, arr[2] + "已存在");
     }
 
 }

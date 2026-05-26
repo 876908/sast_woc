@@ -30,8 +30,12 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
         log.info("claims:{}", claims);
         request.setAttribute("UserCode", claims.get("UserCode"));
-        request.setAttribute("Role", claims.get("Role"));
-        request.setAttribute("AcademyId", claims.get("AcademyId"));
+        Object roleObj = claims.get("Role");
+        Integer role = roleObj instanceof Number ? ((Number) roleObj).intValue() : null;
+        request.setAttribute("Role", role);
+        Object academyIdObj = claims.get("AcademyId");
+        Long academyId = academyIdObj instanceof Number ? ((Number) academyIdObj).longValue() : null;
+        request.setAttribute("AcademyId", academyId);
         return true;
     }
 }

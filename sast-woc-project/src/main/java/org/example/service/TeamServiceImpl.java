@@ -14,7 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,6 +37,9 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public TeamVO getByCaptain(String UserCode) {
         TeamVO teamVO=teamMapper.getByCaptain(UserCode);
+        if (teamVO == null) {
+            throw new BusinessException(4001, "未找到所属队伍");
+        }
         List<Integer> memberIds=memberMapper.getStudentIds(teamVO.getId());
         List<Integer> instructorIds=intructorMapper.getInstructorWorkCode(teamVO.getId());
         teamVO.setMemberIds(memberIds);
@@ -50,6 +57,9 @@ public class TeamServiceImpl implements TeamService {
         User user=new User();
         user.setUserCode(userCode);
         User user1 = userMapper.selectByUserCode(user);
+        if (user1 == null) {
+            throw new BusinessException(4001, "用户不存在");
+        }
         if (!team.getCaptainId().equals(user1.getId())) {
             throw new BusinessException(2003, "无权修改其他队伍的信息");
         }
@@ -66,21 +76,22 @@ public class TeamServiceImpl implements TeamService {
 
     private void updateMembers(Long teamId, List<Long> newMemberIds) {
         List<Integer> currentIds = memberMapper.selectIdsByTeamId(teamId);
+        Set<Long> currentIdSet = currentIds.stream().map(Long::valueOf).collect(Collectors.toSet());
+        Set<Long> newIdSet = newMemberIds == null ? Collections.emptySet() : new HashSet<>(newMemberIds);
         //删除不在新集合的成员
-        for (Integer id : currentIds) {
-            if (!newMemberIds.contains(id)) {
-                Member member = memberMapper.selectById(Long.valueOf(id));
+        for (Long id : currentIdSet) {
+            if (!newIdSet.contains(id)) {
+                Member member = memberMapper.selectById(id);
                 if (member.getIsCaptain() == 1) {
                     throw new BusinessException(3002, "不能移除队长");
                 }
-                memberMapper.deleteById(Long.valueOf(id));
+                memberMapper.deleteById(id);
             }
         }
 
         //新增新成员
-        for (Long id : newMemberIds) {
-            if (!currentIds.contains(id)) {
-                //检查该成员是否存在
+        for (Long id : newIdSet) {
+            if (!currentIdSet.contains(id)) {
                 Member member = memberMapper.selectById(id);
                 if (member == null) {
                     throw new BusinessException(4001, "成员ID " + id + " 不存在");
@@ -94,16 +105,18 @@ public class TeamServiceImpl implements TeamService {
 
     private void updateInstructors(Long teamId, List<Long> newInstructorIds) {
         List<Integer> currentIds = teamInstructorMapper.selectInstructorIdsByTeamId(teamId);
+        Set<Long> currentIdSet = currentIds.stream().map(Long::valueOf).collect(Collectors.toSet());
+        Set<Long> newIdSet = newInstructorIds == null ? Collections.emptySet() : new HashSet<>(newInstructorIds);
         //删除不再关联的指导老师
-        for (Integer id : currentIds) {
-            if (!newInstructorIds.contains(id)) {
-                teamInstructorMapper.delete(teamId, Long.valueOf(id));
-                intructorMapper.setNullByTeamId(Long.valueOf(id));
+        for (Long id : currentIdSet) {
+            if (!newIdSet.contains(id)) {
+                teamInstructorMapper.delete(teamId, id);
+                intructorMapper.setNullByTeamId(id);
             }
         }
         //新增未关联的指导老师
-        for (Long id : newInstructorIds) {
-            if (!currentIds.contains(id)) {
+        for (Long id : newIdSet) {
+            if (!currentIdSet.contains(id)) {
                 teamInstructorMapper.insert(teamId, id);
                 intructorMapper.updateTeamId(id, teamId);
             }
