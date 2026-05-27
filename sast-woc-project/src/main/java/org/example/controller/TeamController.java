@@ -14,22 +14,25 @@ import java.util.List;
 public class TeamController {
     @Autowired
     private TeamService teamService;
+
     @GetMapping("/captain/team")
-    public Result getTeam(@RequestAttribute String UserCode) {
-        TeamVO team=teamService.getByCaptain(UserCode);
+    public Result getTeam(@RequestAttribute("UserCode") String userCode) {
+        TeamVO team = teamService.getByCaptain(userCode);
         return Result.success(team);
     }
+
     @RequireRoleAnnotation.RequireRole(0)
     @PostMapping("/captain/team")
-    public Result updateTeam(@RequestBody TeamUpdateDTO updateDTO, @RequestAttribute String UserCode) {
-        teamService.updateTeam(updateDTO, UserCode);
+    public Result updateTeam(@RequestBody TeamUpdateDTO updateDTO, @RequestAttribute("UserCode") String userCode) {
+        teamService.updateTeam(updateDTO, userCode);
         return Result.success(updateDTO);
     }
+
     @GetMapping("/academy/team")
     @RequireRoleAnnotation.RequireRole(2)
     public Result academyGetTeamList(@RequestParam(required = false) Integer comId,
-                              @RequestAttribute Long AcademyId) {
-        List<TeamVO> teamlist = teamService.academyGetTeamList(comId, AcademyId);
+                                     @RequestAttribute("AcademyId") Long academyId) {
+        List<TeamVO> teamlist = teamService.academyGetTeamList(comId, academyId);
         return Result.success(teamlist);
     }
 }

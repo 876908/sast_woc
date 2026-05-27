@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Update;
 import java.util.List;
 
 @Mapper
-public interface IntructorMapper {
+public interface InstructorMapper {
     @Select("select id from instructor where team_id=#{teamId}")
     List<Integer> getInstructorWorkCode(Long teamId);
     @Update("update instructor set team_id=#{newTeamId} where id=#{instructorId}")

@@ -26,41 +26,44 @@ public class MemberController {
     private TeamMapper teamMapper;
 
     @GetMapping("/captain/team/{teamId}/member")
-    public Result getTeamMember(@PathVariable Integer teamId, @RequestAttribute String UserCode) {
-        Result authError = checkCaptainTeamAccess(teamId, UserCode);
+    public Result getTeamMember(@PathVariable Integer teamId, @RequestAttribute("UserCode") String userCode) {
+        Result authError = checkCaptainTeamAccess(teamId, userCode);
         if (authError != null) {
             return authError;
         }
-        List<MemberVO> memberList=memberService.getByTeamId(teamId, UserCode);
+        List<MemberVO> memberList = memberService.getByTeamId(teamId, userCode);
         return Result.success(memberList);
     }
+
     @PostMapping("/captain/team/{teamId}/member")
-    public Result addMember(@PathVariable Integer teamId, @RequestBody MemberAddDTO addDTO, @RequestAttribute String UserCode) {
+    public Result addMember(@PathVariable Integer teamId, @RequestBody MemberAddDTO addDTO, @RequestAttribute("UserCode") String userCode) {
         if (!Objects.equals(addDTO.getTeamId(), Long.valueOf(teamId))) {
             return Result.error(1001, "路径teamId与请求体中的teamId不一致");
         }
-        Result authError = checkCaptainTeamAccess(teamId, UserCode);
+        Result authError = checkCaptainTeamAccess(teamId, userCode);
         if (authError != null) {
             return authError;
         }
         memberService.addMember(teamId, addDTO);
         return Result.success(addDTO);
     }
+
     @DeleteMapping("/captain/team/{teamId}/member")
-    public Result deleteMember(@PathVariable Integer teamId, @RequestBody MemberDeleteDTO deleteDTO, @RequestAttribute String UserCode) {
-        Result authError = checkCaptainTeamAccess(teamId, UserCode);
+    public Result deleteMember(@PathVariable Integer teamId, @RequestBody MemberDeleteDTO deleteDTO, @RequestAttribute("UserCode") String userCode) {
+        Result authError = checkCaptainTeamAccess(teamId, userCode);
         if (authError != null) {
             return authError;
         }
         memberService.deleteMember(teamId, deleteDTO.getId());
         return Result.success(deleteDTO);
     }
+
     @PatchMapping("/captain/team/{teamId}/member")
-    public Result updateMember(@PathVariable Integer teamId, @RequestBody MemberUpdateDTO updateDTO, @RequestAttribute String UserCode) {
+    public Result updateMember(@PathVariable Integer teamId, @RequestBody MemberUpdateDTO updateDTO, @RequestAttribute("UserCode") String userCode) {
         if (!Objects.equals(updateDTO.getTeamId(), Long.valueOf(teamId))) {
             return Result.error(1001, "路径teamId与请求体中的teamId不一致");
         }
-        Result authError = checkCaptainTeamAccess(teamId, UserCode);
+        Result authError = checkCaptainTeamAccess(teamId, userCode);
         if (authError != null) {
             return authError;
         }
@@ -80,4 +83,3 @@ public class MemberController {
         return null;
     }
 }
-

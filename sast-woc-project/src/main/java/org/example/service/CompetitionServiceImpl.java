@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.example.constant.RoleConstants;
 import org.example.exception.BusinessException;
 import org.example.mapper.CompetitionsMapper;
 import org.example.pojo.Competition;
@@ -14,13 +15,15 @@ import java.util.List;
 public class CompetitionServiceImpl implements CompetitionsService {
     @Autowired
     private CompetitionsMapper competitionMapper;
+
     @Override
-    public List<Competition> findAll(Integer role, String userCode){
-        if(role==0){
+    public List<Competition> findAll(Integer role, String userCode) {
+        if (role != null && role == RoleConstants.CAPTAIN) {
             return competitionMapper.findAll2(userCode);
         }
         return competitionMapper.findAll();
     }
+
     @Override
     @Transactional
     public Competition createCompetition(Competition competition) {

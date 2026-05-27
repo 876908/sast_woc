@@ -5,7 +5,7 @@ import org.apache.ibatis.jdbc.SQL;
 public class TeamSqlProvider {
 
     public String selectByComIdAndAcademy(@Param("academyId") Long academyId,
-                                          @Param("comId") Long comId) {
+                                          @Param("comId") Integer comId) {
         return new SQL() {{
             SELECT("t.*");
             FROM("team t");

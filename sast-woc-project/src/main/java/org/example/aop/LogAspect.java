@@ -1,4 +1,4 @@
-package org.example.AOP;
+package org.example.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @Slf4j
-public class Aspect {
+public class LogAspect {
     @Around("@annotation(org.example.annotation.LogOperation)")
     public Object record(ProceedingJoinPoint pjp) throws Throwable {
         String method = pjp.getSignature().toShortString();

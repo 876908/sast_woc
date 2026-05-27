@@ -2,24 +2,41 @@ package org.example.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
 
+@Component
 public class JwtUtils {
-    public static String generateToken(Map<String,Object> claims){
+
+    private final SecretKey key;
+
+    public JwtUtils(@Value("${jwt.secret}") String secret) {
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    @Value("${jwt.expiration}")
+    private long expiration;
+
+    public String generateToken(Map<String, Object> claims) {
         return Jwts.builder()
-                .signWith(SignatureAlgorithm.HS256,"SW1oYW5kc29tZQ==SW1oYW5kc29tZQ==SW1oYW5kc29tZQ==")
-                .addClaims(claims)
-                .setExpiration(new Date(System.currentTimeMillis()+3600000))
+                .claims(claims)
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(key)
                 .compact();
     }
-    public static Claims parseJWT(String jwt) {
+
+    public Claims parseJWT(String jwt) {
         return Jwts.parser()
-                .setSigningKey("SW1oYW5kc29tZQ==SW1oYW5kc29tZQ==SW1oYW5kc29tZQ==")
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(jwt)
-                .getBody();
+                .parseSignedClaims(jwt)
+                .getPayload();
     }
 }

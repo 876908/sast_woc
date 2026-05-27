@@ -14,4 +14,7 @@ public interface TeamInstructorMapper {
 
     @Insert("insert into team_instructor(team_id, instructor_id) values(#{teamId}, #{instructorId})")
     void insert(@Param("teamId") Long teamId, @Param("instructorId") Long instructorId);
+
+    @Select("select count(*) > 0 from team_instructor where instructor_id = #{instructorId}")
+    boolean existsByInstructorId(Long instructorId);
 }

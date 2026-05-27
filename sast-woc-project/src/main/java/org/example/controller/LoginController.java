@@ -13,13 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
     @Autowired
     private UserService userService;
-    @PostMapping("/login")
-    public Result login(@RequestBody User user){
-        LoginVO Token=userService.login(user);
-        if(Token!=null){
-            return Result.success(Token);
-        }
-        return Result.error(2002,"用户名或密码错误");
-    }
 
+    @PostMapping("/login")
+    public Result login(@RequestBody User user) {
+        if (user == null || user.getUserCode() == null || user.getUserCode().isBlank()
+                || user.getPassword() == null || user.getPassword().isBlank()) {
+            return Result.error(2001, "用户名或密码不能为空");
+        }
+        LoginVO token = userService.login(user);
+        if (token != null) {
+            return Result.success(token);
+        }
+        return Result.error(2002, "用户名或密码错误");
+    }
 }

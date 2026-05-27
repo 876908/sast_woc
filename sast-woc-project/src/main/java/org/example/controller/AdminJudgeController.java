@@ -24,8 +24,8 @@ public class AdminJudgeController {
 
     @DeleteMapping("admin/judge")
     public Result deleteJudge(@RequestBody User user) {
-        User user1=userMapper.selectByUserCode(user);
+        User existing = userMapper.selectByUserCode(user.getUserCode());
         adminJudgeService.deleteJudge(user.getUserCode());
-        return Result.success(user1);
+        return Result.success(existing);
     }
 }

@@ -15,7 +15,7 @@ public interface ScoreMapper {
     @Select("select * from score where id = #{id}")
     Score selectById(Long id);
 
-    @Update("update score set id=#{id}, judge_id=#{judgeId}, work_code=#{workCode}, team_id=#{teamId}, " +
+    @Update("update score set judge_id=#{judgeId}, work_code=#{workCode}, team_id=#{teamId}, " +
             "com_id=#{comId}, score=#{score}, comment=#{comment} where id=#{id}")
     void updateById(Score score);
 }
